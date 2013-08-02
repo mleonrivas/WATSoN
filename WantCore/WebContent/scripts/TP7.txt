@@ -1,0 +1,91 @@
+{actions: [				
+			{
+				id:"7.0",
+				action: "exist",
+				localizator: "xpath",
+				localParam: '//*[@class = "TaskAsCard TP7 PID_14"]',
+				configuration: "",
+				data: "0"
+			},
+			{
+				id:"7.1",
+				action: "click",
+				localizator: "xpath",
+				localParam: '//*[@class = "TaskAsCard TP7 PID_14"]//*[@class = "InlineAction"][1]',
+				configuration: "",
+				data: "0"	
+			},
+			{
+				id: "7.2",
+				action: "wait",
+				localizator: "",
+				localParam: "",
+				configuration: "",
+				data: "5000"
+			},
+			{
+				id:"7.3",
+				action: "exist",
+				localizator: "xpath",
+				localParam: '//*[@class = "tabPanel"]//*[@class = "tab"]',
+				configuration: "",
+				data: "2"	
+			},
+			{
+				id:"7.3.1",
+				action: "click",
+				localizator: "xpath",
+				localParam: '//*[@class = "tabPanel"]//*[@class = "tab"]',
+				configuration: "",
+				data: "2"	
+			},
+			{
+				id: "7.3.2",
+				action: "wait",
+				localizator: "",
+				localParam: "",
+				configuration: "",
+				data: "3000"
+			},
+			{
+				id:"7.3.3",
+				action: "exist",
+				localizator: "xpath",
+				localParam: '//*[@class = "KVPropLine"]',
+				configuration: "",
+				data: "2"	
+			},
+			{
+				id:"7.3.4",
+				action: "changeValue",
+				localizator: "xpath",
+				localParam: '//*[@class = "gwt-TextBox"]',
+				configuration: "Current Network Diagram Test TP7",
+				data: "0"	
+			},
+			{
+				id:"7.3.5",
+				action: "changeValue",
+				localizator: "xpath",
+				localParam: '//*[@class = "gwt-TextBox"]',
+				configuration: "http:// URL Test TP7",
+				data: "1"	
+			},
+			{
+				id: "7.4",
+				action: "click",
+				localizator: "xpath",
+				localParam: '//*[@class = "gwt-Button"]',
+				configuration: "",
+				data: "0"
+			},
+			{
+				id: "7.5",
+				action: "end",
+				localizator: "",
+				localParam: "",
+				configuration: "",
+				data: "3000"
+			}
+		]
+}

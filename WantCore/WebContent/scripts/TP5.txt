@@ -1,0 +1,66 @@
+{actions: [
+			{
+				id:"5.0",
+				action: "exist",
+				localizator: "xpath",
+				localParam: '//*[@class = "TaskAsCard TP5 PID_2"]',
+				configuration: "",
+				data: "0"
+			},
+			{
+				id:"5.1",
+				action: "click",
+				localizator: "xpath",
+				localParam: '//*[@class = "TaskAsCard TP5 PID_2"]//*[@class = "InlineAction"][1]',
+				configuration: "",
+				data: "0"	
+			},
+			{
+				id: "5.2",
+				action: "wait",
+				localizator: "",
+				localParam: "",
+				configuration: "",
+				data: "5000"
+			},
+			{
+				id:"5.3",
+				action: "click",
+				localizator: "xpath",
+				localParam: '//*[@class = "tab"]',
+				configuration: "",
+				data: "2"	
+			},
+			{
+				id: "5.2",
+				action: "wait",
+				localizator: "",
+				localParam: "",
+				configuration: "",
+				data: "3000"
+			},
+			{
+				id:"5.4",
+				action: "changeValue",
+				localizator: "xpath",
+				localParam: '//*[@class = "gwt-TextBox"]',
+				configuration: "URL Test TP5",
+				data: "1"	
+			},
+			{
+				id: "5.5",
+				action: "click",
+				localizator: "xpath",
+				localParam: '//*[@class = "gwt-Button"]',
+				configuration: "",
+				data: ""
+			},
+			{
+				id: "5.6",
+				action: "end",
+				localizator: "",
+				localParam: "",
+				configuration: "",
+				data: "5000"
+			}
+]}

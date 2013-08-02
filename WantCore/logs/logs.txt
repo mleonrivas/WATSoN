@@ -1,0 +1,7 @@
+
+Agent: 178-195-128
+browser: Chrome
+version: 27
+OS: Windows
+[INFO] Agent 178-195-128 have not more actions, 178-195-128 has finished.
+[INFO] Agent 178-195-128 have not more actions, 178-195-128 has finished.

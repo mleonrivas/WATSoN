@@ -1,0 +1,67 @@
+{actions: [			
+			{
+				id:"13.0",
+				action: "exist",
+				localizator: "xpath",
+				localParam: '//*[@class = "TaskAsCard TP13 PID_122"]',
+				configuration: "",
+				data: "1"
+			},
+			{
+				id:"13.1",
+				action: "click",
+				localizator: "xpath",
+				localParam: '//*[@class = "TaskAsCard TP13 PID_122"]//*[@class = "InlineAction"][1]',
+				configuration: "",
+				data: "0"	
+			},
+			{
+				id: "13.2",
+				action: "wait",
+				localizator: "",
+				localParam: "",
+				configuration: "",
+				data: "30000"
+			},
+			{
+				id:"13.3",
+				action: "exist",
+				localizator: "xpath",
+				localParam: '//*[@class = "gwt-RadioButton"]',
+				configuration: "",
+				data: "2"
+			},
+			{
+				id:"13.4",
+				action: "click",
+				localizator: "xpath",
+				localParam: '//*[@class = "gwt-RadioButton"]//*[@type = "radio"]',
+				configuration: "",
+				data: "0"
+			},
+			{
+				id: "13.5",
+				action: "wait",
+				localizator: "",
+				localParam: "",
+				configuration: "",
+				data: "3000"
+			},
+			{
+				id: "13.6",
+				action: "click",
+				localizator: "xpath",
+				localParam: '//*[@class = "gwt-Button"]',
+				configuration: "",
+				data: "0"
+			},
+			{
+				id: "13.7",
+				action: "end",
+				localizator: "",
+				localParam: "",
+				configuration: "",
+				data: "3000"
+			}
+		]
+}
