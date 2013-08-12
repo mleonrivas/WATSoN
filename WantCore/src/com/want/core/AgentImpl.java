@@ -18,6 +18,8 @@ public class AgentImpl implements Agent{
 	
 	private List<Response> responses;
 	
+	private boolean wait;
+	
 	public AgentImpl(){
 		
 	}
@@ -27,27 +29,20 @@ public class AgentImpl implements Agent{
 		this.browserVersion = browserVersion;
 		this.oS = oS;
 		pendingActions = new ArrayList<String>();
+		responses = new ArrayList<Response>();
+		wait = false;
 	}
-	/**
-	 * @return
-	 * @uml.property  name="id"
-	 */
+	
 	@Override
 	public String getId() {
 		return id;
 	}
-	/**
-	 * @return
-	 * @uml.property  name="browser"
-	 */
+	
 	@Override
 	public String getBrowser() {
 		return browser;
 	}
-	/**
-	 * @return
-	 * @uml.property  name="browserVersion"
-	 */
+	
 	@Override
 	public String getBrowserVersion() {
 		return browserVersion;
@@ -93,5 +88,13 @@ public class AgentImpl implements Agent{
 	@Override
 	public List<Response> getReponses(){
 		return responses;
+	}
+	@Override
+	public boolean itsWait() {
+		return wait;
+	}
+	@Override
+	public void setItsWait(boolean wait) {
+		this.wait = wait;
 	}
 }

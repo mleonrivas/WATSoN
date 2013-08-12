@@ -15,7 +15,7 @@ public class AgentResource extends BaseResource{
 	public String agents(){
 		String res = "";
 		for(Agent a:getAgentsConnected()){
-			res = res + a.getId() + "\n  ----  \n";
+			res = res + a.getId() + "\n";
 		}
 		return res;
 	}

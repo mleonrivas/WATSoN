@@ -35,8 +35,9 @@ public class ResourceApplication extends Application{
 	        router.attach("/agents", AgentResource.class);
 	        router.attach("/play",Play.class);
 	        router.attach("/add/{agent}", DispenseScripts.class);
-	        router.attach("/responses",AgentResponses.class);
+	        router.attach("/responses/{agent}",AgentResponses.class);
 	        router.attach("/fileUpload", UploadFile.class);
+	        router.attach("/stop", StopCore.class);
 	        return router;
 	    }
 		/**

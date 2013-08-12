@@ -31,4 +31,6 @@ public interface Agent {
 	void sendMsg(String msg);
 	void addResponse(Response response);
 	List<Response> getReponses();
+	boolean itsWait();
+	void setItsWait(boolean wait);
 }

@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>Web AplicatioN Testing Play View</title>
+ 	<link rel="stylesheet" type="text/css" href="styles/style.css">
+	<link rel="stylesheet" type="text/css" href="styles/stylesPV.css">
+	<script type="text/javascript" src="RestletJSAPIPlayView.js"></script>
+	<script type="text/javascript" src="RestletJSAPI.js"></script>
+ 	<script type="text/javascript">
+		function loadFunctions(){
+			getAgentsPV();
+		}
+	</script>
+</head>
+<body onload="loadFunctions()">
+	<div id="board">
+	<h1>Web AplicatioN Testing</h1>
+		<div id="display">
+			<div id="headPV"></div>
+			<div id="contentPV"></div>
+		</div>
+	<button id="play" onclick="play()">PLAY</button>
+	</div>
+</body>
+</html>
