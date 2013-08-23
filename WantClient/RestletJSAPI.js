@@ -46,7 +46,6 @@
 				      })(f);
 				    
 				    reader.readAsText(f);
-					
 			    }
 			  }
 			  fileInput.addEventListener('change', handleFileSelect, false);			
@@ -57,26 +56,31 @@
 		    xmlHttp.open( "GET", "http://localhost:8080/WantCore/play", true );
 		    xmlHttp.send();
 		}
+		function removeScript(action){
+			var xmlHttp = null;
+		    xmlHttp = new XMLHttpRequest();
+			xmlHttp.open( "DELETE", "http://localhost:8080/WantCore/add/"+agent, true );
+		    xmlHttp.send(action);
+		}
 		function dispenseTask(action,agent){
 			var xmlHttp = null;
 		    xmlHttp = new XMLHttpRequest();
-		    //xmlHttp.open( "PUT", "http://localhost:8080/WantCore/add/"+action+"/"+agent, true );
 			xmlHttp.open( "PUT", "http://localhost:8080/WantCore/add/"+agent, true );
 		    xmlHttp.send(action);
-			addImg(agent);
+			addImg(agent, action);
 		}
-		function addImg(agent){
+		function addImg(agent,action){
 			var nodesSnapshotDiv = document.evaluate('//*[@id2 = "'+agent+'"]',document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
 			var div = nodesSnapshotDiv.snapshotItem(0);
 			var img = document.createElement('img');
 			img.setAttribute('src','styles/images/file.jpg');
 			img.setAttribute('id','img');
+			img.setAttribute('onclick','removeScript('+'"'+ action +'"'+')');
 			div.appendChild(img);
 		}
 		function getDispensedTasks(){
 			var xmlHttp = null;
 		    xmlHttp = new XMLHttpRequest();
-		    //xmlHttp.open( "GET", "http://localhost:8080/WantCore/add/"+action+"/"+agent, true );
 		    xmlHttp.open( "GET", "http://localhost:8080/WantCore/add/"+agent, true );
 		    xmlHttp.send();
 		}

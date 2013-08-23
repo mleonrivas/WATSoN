@@ -3,6 +3,7 @@ package com.want.rest;
 import java.io.IOException;
 
 import org.restlet.representation.Representation;
+import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.resource.Put;
 
@@ -18,9 +19,7 @@ public class DispenseScripts extends BaseResource{
 //		System.out.println(action);
 		this.agent = (String) getRequestAttributes().get("agent");
 	}
-//	public DispenseScripts(){
-//		init();
-//	}
+
 	
 	@Put("/{agent}")
 	public String scriptSelected(Representation entity) throws IOException{
@@ -51,6 +50,21 @@ public class DispenseScripts extends BaseResource{
 			}
 		}
 		return res;
+	}
+	
+	@Delete("/{agent}")
+	public void scriptDelete(Representation entity) throws IOException{
+		action = entity.getText();
+		init();
+		for(Agent a:getCoordinator().getAgentsConnected()){
+			if(a.getId().equals(agent) && a.getPendingActions().contains(action)){
+				a.getPendingActions().remove(action);
+				System.out.println("An action is removed of agent "+a.getId());
+			}else{
+				System.out.println("Couldn't remove action of agent " +a.getId());
+			}
+		}
+		
 	}
 
 }

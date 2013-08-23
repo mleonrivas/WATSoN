@@ -20,6 +20,8 @@ public class AgentImpl implements Agent{
 	
 	private boolean wait;
 	
+	private Integer indexOfScript;
+	
 	public AgentImpl(){
 		
 	}
@@ -31,6 +33,7 @@ public class AgentImpl implements Agent{
 		pendingActions = new ArrayList<String>();
 		responses = new ArrayList<Response>();
 		wait = false;
+		indexOfScript = 0;
 	}
 	
 	@Override
@@ -57,7 +60,7 @@ public class AgentImpl implements Agent{
 	}
 	@Override
 	public String toString(){
-		return "Agent: "+ id+ "\nbrowser: "+browser+"\nversion: "+browserVersion+"\nOS: "+oS;
+		return "Agent: "+ id+ "\nbrowser: "+browser+"\nversion: "+browserVersion+"\nOS: "+oS + "\nwaiting: " + itsWait();
 	}
 	
 	@Override
@@ -97,4 +100,13 @@ public class AgentImpl implements Agent{
 	public void setItsWait(boolean wait) {
 		this.wait = wait;
 	}
+	@Override
+	public Integer getIndexOfScript() {
+		return indexOfScript;
+	}
+	@Override
+	public void setIndexOfScript(Integer indexOfScript) {
+		this.indexOfScript = indexOfScript;
+	}
+	
 }

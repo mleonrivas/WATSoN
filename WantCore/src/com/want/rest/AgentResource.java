@@ -11,6 +11,11 @@ import com.want.core.Agent;
 
 public class AgentResource extends BaseResource{
 	
+	String agent;
+	public void init(){
+		this.agent = (String) getRequestAttributes().get("agent");
+	}
+	
 	@Get
 	public String agents(){
 		String res = "";
@@ -19,4 +24,11 @@ public class AgentResource extends BaseResource{
 		}
 		return res;
 	}
+	
+	@Get("/{agent}")
+	public String anAgent(){
+		String res = getCoordinator().getAgentsConnected().get(getCoordinator().getAgentsConnected().indexOf(agent)).toString();
+		return res;
+	}
+	
 }

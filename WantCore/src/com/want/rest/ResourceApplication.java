@@ -19,7 +19,7 @@ public class ResourceApplication extends Application{
 		private List<Agent> agentConnected = coordinator.getAllAgent();
 		
 		public ResourceApplication(){
-			coordinator.getResponsesOfAgent();
+			//coordinator.getResponsesOfAgent();
 		}
 		
 	 	@Override
@@ -37,6 +37,7 @@ public class ResourceApplication extends Application{
 	        router.attach("/add/{agent}", DispenseScripts.class);
 	        router.attach("/responses/{agent}",AgentResponses.class);
 	        router.attach("/fileUpload", UploadFile.class);
+	        router.attach("/logs", ServerLogs.class);
 	        router.attach("/stop", StopCore.class);
 	        return router;
 	    }

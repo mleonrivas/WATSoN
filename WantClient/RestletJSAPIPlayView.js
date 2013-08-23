@@ -14,9 +14,16 @@ function getAgentsPV(){
 function getResponsesOfAgents(agent){
 		var xmlHttp = null;
 		xmlHttp = new XMLHttpRequest();
+		xmlHttp.onreadystatechange=function(){
+		    if (xmlHttp.readyState==4 && xmlHttp.status==200){
+				cleanDivResponses();
+				document.getElementById('responsesTextArea').innerHTML = xmlHttp.responseText;
+		    }
+		}
 		xmlHttp.open( "GET", "http://localhost:8080/WantCore/responses/"+agent, true );
-		//xmlHttp.send();
-		return xmlHttp.responseText;
+		xmlHttp.send();
+		//drawResponsesAgent(xmlHttp);
+		return xmlHttp;
 }
 function drawContentPV(xmlHttp){
 	var agents = xmlHttp.split("\n");
@@ -34,17 +41,24 @@ function drawContentPV(xmlHttp){
 		var newButton = document.createElement('button');
 		newButton.innerHTML = agents[i];
 		newButton.setAttribute('id',agents[i]);
-		newButton.setAttribute('onclick','drawResponsesAgent('+ '"' + agents[i] + '"' +')');
+		newButton.setAttribute('onclick','getResponsesOfAgents('+ '"' + agents[i] + '"' +')');
+		
 		toolbar.appendChild(newButton);
 	}
 }
-function drawResponsesAgent(agent){
-	var responses = getResponsesOfAgents(agent);
-	cleanDivResponses();
-	//var label = document.getElementById('responsesLabel').innerHTML = responses;
-	document.getElementById('responsesLabel').innerHTML = responses;
-	//label.innerHTML = responses;
+function getServerLogs(){
 	
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange=function(){
+		if (xmlHttp.readyState==4 && xmlHttp.status==200){
+			document.getElementById("textAreaLogs").innerHTML= xmlHttp.responseText;
+		}
+	}
+	xmlHttp.open("GET","http://localhost:8080/WantCore/logs",true);
+	xmlHttp.send();
+}
+function drawResponsesAgent(xmlHttp){
+	cleanDivResponses();
 }
 function cleanDivResponses(){
 	var div = document.getElementById('responses');
@@ -53,7 +67,7 @@ function cleanDivResponses(){
 	var responsesdiv = document.createElement('div');
 	responsesdiv.setAttribute('id',"responses");
 	content.appendChild(responsesdiv);
-	var label = document.createElement('label');
-	label.setAttribute('id','responsesLabel');
-	responsesdiv.appendChild(label);
+	var textArea = document.createElement('textarea');
+	textArea.setAttribute('id','responsesTextArea');
+	responsesdiv.appendChild(textArea);
 }

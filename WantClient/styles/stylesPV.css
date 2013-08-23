@@ -1,7 +1,31 @@
 button#play{
 	position: relative;
-	left: 700px;	
+	margin-left: auto;
+	margin-right: auto;	
+	margin-top: 20px;
 }
 div#headPV{
 	height: 40px;
+}
+div#toolbar{
+	border: 2px solid #000080;
+	background-color:#000080;
+	margin-top: 10px;
+}
+div#logs{
+	float: right;
+	width: 215px;
+	height: 500px;
+}
+textarea#responsesTextArea{
+	height: 200px;
+	width: 300px;
+	font: oblique bold 120% cursive;
+	font-size: 15px;
+	border: 1px solid #000080;
+}
+textarea#textAreaLogs{
+	width: 215px;
+	height: 450px;
+	border: 1px solid #000080;
 }

@@ -15,4 +15,5 @@ public interface Coordinator {
 	void getResponsesOfAgent();
 	List<String> getScripts();
 	List<Agent> getAgentsConnected();
+	List<String> getServerLogs();
 }

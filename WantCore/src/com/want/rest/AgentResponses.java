@@ -20,7 +20,7 @@ public class AgentResponses extends BaseResource{
 	public String responses(){
 		init();
 		String res = "";
-		getCoordinator().getResponsesOfAgent();
+		//getCoordinator().getResponsesOfAgent();
 		
 		List<String> agents = new ArrayList<String>();
 		for(Agent a: getCoordinator().getAgentsConnected()){
@@ -30,13 +30,24 @@ public class AgentResponses extends BaseResource{
 		if(!agents.contains(agent)){
 			res = "this agent not exist or not is connected.";
 		}else{
+//			int index = getCoordinator().getAgentsConnected().indexOf(agent);
+//			Agent agent = getCoordinator().getAgentsConnected().get(index);
+//			if(!agent.getReponses().isEmpty()){
+//				for(Response response: agent.getReponses()){
+//					res = res + response.getId()+" "+response.getAction()+" "+response.getData()+"\n";
+//				}
+//			}else{
+//				res = "In this agent there isn't responses";
+//			}
 			for(Agent a: getCoordinator().getAgentsConnected()){
-				if(!a.getReponses().isEmpty()){
-					for(Response response: a.getReponses()){
-						res = res + response.getId()+" "+response.getAction()+" "+response.getData()+"\n";
+				if(a.getId().equals(agent)){
+					if(!a.getReponses().isEmpty()){
+						for(Response response: a.getReponses()){
+							res = res + response.getId()+" "+response.getAction()+" "+response.getData()+"\n";
+						}
+					}else{
+						res = "this agent has not responded because it hasn't assigned action.";
 					}
-				}else{
-					res = "this agent has not responded because it hasn't assigned action.";
 				}
 			}
 		}

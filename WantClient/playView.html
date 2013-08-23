@@ -10,17 +10,31 @@
  	<script type="text/javascript">
 		function loadFunctions(){
 			getAgentsPV();
+			getServerLogs();
+		}
+		function refreshPV(){
+			window.location.href="http://localhost:8080/WantClient/playView.html";
 		}
 	</script>
 </head>
 <body onload="loadFunctions()">
 	<div id="board">
 	<h1>Web AplicatioN Testing</h1>
+		<div id="logs">
+			<h2>Server logs</h2>
+			<textarea id="textAreaLogs"></textarea>
+		</div>
 		<div id="display">
+			<img src="styles/images/logoWANT.png">
 			<div id="headPV"></div>
 			<div id="contentPV"></div>
 		</div>
-	<button id="play" onclick="play()">PLAY</button>
+		<div id="divButtons">
+		<center>
+			<button id="refresh" onclick="refreshPV()">Refresh</button>
+			<button id="play" onclick="play()">PLAY</button>
+		</center>
+		</div>
 	</div>
 </body>
 </html>

@@ -22,10 +22,17 @@ h4#lists{
 }
 button#done{
 	position: relative;
-	left: 700px;	
+	margin-left: auto;
+	margin-right: auto;	
+	margin-top: 20px;
+}
+button#refresh{
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
 }
 div#display{
-	width: 700px;
+	width: 900px;
 	margin-left:auto;
 	margin-right:auto;
 }
@@ -33,14 +40,24 @@ div#board{
 	height: 800px;
 }
 div#head{
-	height: 100px;
+	height: 50px;
+	margin-bottom: 50px;
+	border-bottom: 2px solid #000080;
+}
+img#img{
+	float: right;
+	width: 50px;
 }
 img{
-	float: right;
+	width: 100px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
 }
 label{
 	margin-right: 100px;
 }
 div#agent{
 	height: 50px;
+	border: 1px solid #000080;
 }

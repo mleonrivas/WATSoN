@@ -33,4 +33,6 @@ public interface Agent {
 	List<Response> getReponses();
 	boolean itsWait();
 	void setItsWait(boolean wait);
+	Integer getIndexOfScript();
+	void setIndexOfScript(Integer indexOfScript);
 }
