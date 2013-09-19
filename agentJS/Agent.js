@@ -14,7 +14,8 @@ function readData(data) {
 function processListOfActions(list,i){
 	if(i<list.length){
 		processAction(list[i], function callbackFunction(){
-			processListOfActions(list,i+1);
+			i = i+1;
+			processListOfActions(list,i);
 		});
 	}else{
 		//alert("fin");
@@ -25,7 +26,7 @@ function processAction(action, callbackFunction){
 	//alert(action.action);
 	switch(action.action){
 		case "click":
-			sendLog(writeDebugLog("Agent" + id + "Received a \"click\" event: "+ action.id ));
+			sendLog(writeDebugLog("Agent " + id + " Received a \"click\" event: "+ action.id ));
 			var res=false;
 			var elementAux1 = document.evaluate(action.localParam,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
 			var element = elementAux1.snapshotItem(action.data);
@@ -38,7 +39,7 @@ function processAction(action, callbackFunction){
 			callbackFunction.apply();
 			break;
 		case "focus":
-			sendLog(writeDebugLog("Agent" + id + "Received a \"focus\" event: "+ action.id));
+			sendLog(writeDebugLog("Agent " + id + " Received a \"focus\" event: "+ action.id));
 			var elementAux1 = document.evaluate(action.localParam,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
 			var element = elementAux1.snapshotItem(elementAux1.snapshotLength-1);
 			element.focus();
@@ -46,23 +47,30 @@ function processAction(action, callbackFunction){
 			callbackFunction.apply();
 			break;
 		case "exist":
-			sendLog(writeDebugLog("Agent" + id + "Received a \"exist\" event: "+ action.id));
-			var res=false;
+			sendLog(writeDebugLog("Agent " + id + " Received a \"exist\" event: "+ action.id));
+			var res=true;
+			var count = 0;
 			var elementAux1 = document.evaluate(action.localParam,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
-			for (var i=0;i<action.data;i++){
-				var element = elementAux1.snapshotItem(i);
+				var element = elementAux1.snapshotItem(action.data);
 				if(element==null){
-					alert("Elemento no encontrado, id: "+action.id);
+					while(element!=null){
+						setinterval(count++,1000);
+						if(count = 20){
+							res = false;
+							sendLog(writeDebugLog("Agent " + action.id + "not found."));
+							break;
+						}
+					}
+					//sendLog(writeDebugLog("Agent " + action.id + "not found."));
 				}else{
 					res=true;
 					actionFinishedOK = actionFinishedOK && res;
 				}
-			}
-			createResponse(action, res);
+			createResponse(action, true);
 			callbackFunction.apply();
 			break;
 		case "keypress":
-			sendLog(writeDebugLog("Agent" + id + "Received a \"keypress\" event:"+ action.id));
+			sendLog(writeDebugLog("Agent " + id + " Received a \"keypress\" event:"+ action.id));
 			var elementAux1 = document.evaluate(action.localParam,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
 			var elementAux2 = elementAux1.sigleNodeValue;
 			var element = elementAux2[elementAux2.length-1];
@@ -73,7 +81,7 @@ function processAction(action, callbackFunction){
 			callbackFunction.apply();
 			break;
 		case "changeValue":
-			sendLog(writeDebugLog("Agent" + id + "Received a \"changeValue\" event: "+ action.id));
+			sendLog(writeDebugLog("Agent " + id + " Received a \"changeValue\" event: "+ action.id));
 			var res = false;
 			var elementAux2 = document.evaluate(action.localParam,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
 			var textbox = elementAux2.snapshotItem(action.data);	
@@ -82,23 +90,32 @@ function processAction(action, callbackFunction){
 		        var changeEvent = document.createEvent ("HTMLEvents");
 		        changeEvent.initEvent ("change", false, true);
 		        textbox.dispatchEvent (changeEvent);
+		        sendLog(writeDebugLog("[LOG textbox]Agent " + id + " value:" + textbox.value + " Text:" + textbox.Text));
 		        res = true;
 				actionFinishedOK = actionFinishedOK && res;
-		    }
+			}else{
+				sendLog(writeDebugLog("[LOG textbox]Agent " + id + " " + textbox.value + " " + textbox.Text));
+			}
 			createResponse(action, res);
 			callbackFunction.apply();
 			break;
 		case "wait":
-			sendLog(writeDebugLog("Agent " + id + "Received a \"wait\" event: "+ action.id));
+			sendLog(writeDebugLog("Agent " + id + " Received a \"wait\" event: "+ action.id));
 			setTimeout(callbackFunction, action.data);
 			createResponse(action, true);
+			callbackFunction.apply();
+			break;
 		case "end":
-			sendLog(writeDebugLog("Agent " + id + "Received a \"end\" event: "+ action.id));
+			sendLog(writeDebugLog("Agent " + id + " Received a \"end\" event: "+ action.id));
 			setTimeout(callbackFunction, action.data);
 			createResponse(action, actionFinishedOK);
+			callbackFunction.apply();
+			break;
 		case "waitUntil":
-			sendLog(writeDebugLog("Agent " + id + "Received a \"waitUntil\" event: "+ action.id));
+			sendLog(writeDebugLog("Agent " + id + " Received a \"waitUntil\" event: "+ action.id));
 			createResponse(action, true);
+			callbackFunction.apply();
+			break;
 	}
 }
 
@@ -147,7 +164,7 @@ function discharge(){
                         { string: navigator.platform, subString: "Win", identity: "Windows" }, 
                         { string: navigator.platform, subString: "Mac", identity: "Mac" }, 
                         { string: navigator.platform, subString: "Linux", identity: "Linux" } 
-                      ] }
+                      ] };
 	BrowserDetect.init();
 	browser = BrowserDetect.browser;
 	browserVersion = BrowserDetect.version;

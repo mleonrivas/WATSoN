@@ -99,7 +99,7 @@ public class CoordinatorImpl implements Coordinator{
 	}
 	
 	public void nextAction(final Agent a, final int indexAction){
-		if(!a.getPendingActions().isEmpty() && !a.itsWait()){
+		//if(!a.getPendingActions().isEmpty() && !a.itsWait()){
 			String action = a.getPendingActions().get(indexAction);
 			a.sendMsg(action);
 			try {
@@ -115,36 +115,35 @@ public class CoordinatorImpl implements Coordinator{
 		                     String message = new String(body);
 		                     System.out.println("####handleDelivery: " + message);
 		                     Response response = ResponsesFactory.responseOfAgent(message);
-		                     System.out.println("####he recibido una respuesta: " + response.getId() +" "+ response.getAction() );
 		                     logs.add("[INFO]Received a response of: " + response.getId() +" "+ response.getAction());
 		                     for(Agent a : agentsConnected){
 		                    		if(a.getId().equals(response.getAgent())){
-		                    			System.out.println("####identificado agente "+a.getId());
+		                    			logs.add("[INFO]Response of agent identified: "+a.getId());
 		                    			a.addResponse(response);
 		                    			
 		                    			if(response.getAction().equals("waitUntil")){
-			                    			System.out.println("####procesando waitUntil, agente en espera");
+		                    				logs.add("####processing 'waitUntil', agent waiting");
 			                    			//System.out.println("####comprobando identificacion de respuesta: "+response.getId().split(".")[1]);
 			                    			a.setItsWait(true);
 						                    waitAgent.put(a, (String) response.getId().subSequence(2, 3));
 			                    			
 					                    }
 		                    			if(response.getAction().equals("end")){
-			                    			System.out.println("####procesando end");
+		                    				logs.add("####processing 'end'");
 			                    			String splt = (String) response.getId().subSequence(0, 1);
 			                    			a.setIndexOfScript(a.getIndexOfScript()+1);
-			                    				System.out.println("####viene el for");
+			                    			logs.add("####viene el for");
 			                    				doneTasks.add(splt);
 			                    				for(Agent ag : waitAgent.keySet()){
-						                    		System.out.println("####dentro del for "+ waitAgent.get(ag));
-						                    		System.out.println("#### agente y numero asociado" + ag.toString() + " no: "+splt);
+			                    					logs.add("####dentro del for "+ waitAgent.get(ag));
+						                    		logs.add("#### agente y numero asociado" + ag.toString() + " no: "+splt);
 						                    		if(waitAgent.get(ag).equals(splt)){
 						                    			agentsConnected.get(agentsConnected.indexOf(ag)).setItsWait(false);
-						                    			System.out.println("####agente liberado de la espera");
-						                    			System.out.println("####indice de accion: "+ag.getIndexOfScript());
+						                    			logs.add("agent "+ ag.toString()+" is not wait now.");
+						                    			logs.add("####indice de accion: "+ag.getIndexOfScript());
+						                    			logs.add("[INFO]throw 'next action' for "+ ag.getId());
 						                    			nextAction(agentsConnected.get(agentsConnected.indexOf(ag)), ag.getIndexOfScript());
-						                    			System.out.println("####lanzando next action");
-						                    			waitAgent.remove(ag);
+						                    			//waitAgent.remove(ag);
 						                    		}
 						                    	}
 					                    	if(a.getPendingActions().size()>a.getIndexOfScript() && !a.itsWait()){
@@ -157,9 +156,9 @@ public class CoordinatorImpl implements Coordinator{
 		                     }
 		                     
 		                     if(response.getData().equals("false")){
-		                    	 System.out.println("[ERROR] Agent " + response.getAgent()+ " couldn't complete the action " + response.getId());
+		                    	 logs.add("[ERROR] Agent " + response.getAgent()+ " couldn't complete the action " + response.getId());
 		                     }else{
-		                    	 System.out.println("[INFO] Agent " + response.getAgent()+ " complete the action " + response.getId());
+		                    	 logs.add("[INFO] Agent " + response.getAgent()+ " complete the action " + response.getId());
 		                     }
 		                     
 		                 }
@@ -167,9 +166,9 @@ public class CoordinatorImpl implements Coordinator{
 				channelResponses.basicConsume("outputQueue", true, consumer);
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println("Error on method \"nextAction()\" in class CoordinatorImpl");
+				logs.add("[ERROR]Method \"nextAction()\" in class CoordinatorImpl");
 			}
-		}
+		//}
 	}
 
 
