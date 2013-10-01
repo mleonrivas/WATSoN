@@ -1,5 +1,6 @@
 package com.want.rest;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -8,18 +9,21 @@ import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
-import com.want.core.Agent;
+import com.want.core.AgentData;
 import com.want.core.Coordinator;
 import com.want.core.CoordinatorImpl;
 public class ResourceApplication extends Application{
 	
 		private final ConcurrentMap<String, List<String>> items = 
             new ConcurrentHashMap<String, List<String>>();
-		private final Coordinator coordinator = new CoordinatorImpl("localhost");
-		private List<Agent> agentConnected = coordinator.getAllAgent();
 		
-		public ResourceApplication(){
-			//coordinator.getResponsesOfAgent();
+			private final Coordinator coordinator;
+		
+			private List<AgentData> agentConnected;
+		
+		public ResourceApplication() throws IOException{
+			coordinator = new CoordinatorImpl("localhost");
+			agentConnected = coordinator.getAllAgent();
 		}
 		
 	 	@Override
@@ -52,7 +56,7 @@ public class ResourceApplication extends Application{
 		public Coordinator getCoordinator(){
 			return coordinator;
 		}
-		public List<Agent> getAgentsConnected(){
+		public List<AgentData> getAgentsConnected(){
 			return agentConnected;
 		}
 }

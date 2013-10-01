@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.restlet.resource.Get;
-import org.restlet.resource.Post;
 
-import com.want.core.Agent;
+import com.want.core.AgentData;
 import com.want.core.Response;
 
 public class AgentResponses extends BaseResource{
@@ -23,7 +22,7 @@ public class AgentResponses extends BaseResource{
 		//getCoordinator().getResponsesOfAgent();
 		
 		List<String> agents = new ArrayList<String>();
-		for(Agent a: getCoordinator().getAgentsConnected()){
+		for(AgentData a: getCoordinator().getAgentsConnected()){
 			agents.add(a.getId());
 		}
 		
@@ -39,7 +38,7 @@ public class AgentResponses extends BaseResource{
 //			}else{
 //				res = "In this agent there isn't responses";
 //			}
-			for(Agent a: getCoordinator().getAgentsConnected()){
+			for(AgentData a: getCoordinator().getAgentsConnected()){
 				if(a.getId().equals(agent)){
 					if(!a.getReponses().isEmpty()){
 						for(Response response: a.getReponses()){

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author  Gabriel
  */
-public interface Agent {
+public interface AgentData {
 	/**
 	 * @uml.property  name="id"
 	 */
@@ -23,11 +23,11 @@ public interface Agent {
 	 */
 	String getOS();
 	String toString();
-	List<String> getPendingActions();
+	List<Action> getPendingActions();
 	void disconnect();
 	boolean checkConnection();
 	void addAction(String action);
-	void setPendingActions(List<String> actions);
+	//void setPendingActions(List<String> actions);
 	void sendMsg(String msg);
 	void addResponse(Response response);
 	List<Response> getReponses();

@@ -1,12 +1,11 @@
 package com.want.rest;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 import org.restlet.resource.ServerResource;
 
-import com.want.core.Agent;
-import com.want.core.Coordinator; 
+import com.want.core.AgentData;
+import com.want.core.Coordinator;
 
 public class BaseResource extends ServerResource{
 
@@ -15,7 +14,7 @@ public class BaseResource extends ServerResource{
     	return ((ResourceApplication) getApplication()).getCoordinator();
     }
     
-    protected List<Agent> getAgentsConnected(){
+    protected List<AgentData> getAgentsConnected(){
     	return ((ResourceApplication) getApplication()).getAgentsConnected();
     }
   

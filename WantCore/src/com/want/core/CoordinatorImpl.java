@@ -1,47 +1,40 @@
 package com.want.core;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
-import sun.management.resources.agent;
-import sun.net.ConnectionResetException;
-
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
+import com.want.amqp.ConnectionManager;
 import com.want.factory.AgentFactory;
-import com.want.factory.ResponsesFactory;
-import com.want.utils.*;
 @XmlRootElement
 public class CoordinatorImpl implements Coordinator{
 	
 
-	private ConnectionFactory factory = new ConnectionFactory();
+	
 
-	private List<Agent> agentsConnected;
+	private List<AgentData> agentsConnected;
 
 	private List<String> scripts;
 	
-	private List<String> doneTasks;
-	
 	private List<String> logs;
 	
-	private Map<Agent,String> waitAgent;
+	private Map<String, AgentRunner> agentsRunners;
 	
-	Connection connectionAgents;
-	Connection connectionResponses;
-	Channel channelAgents;
-	Channel channelResponses;
+	private Channel channelAgents;
 	
-	public CoordinatorImpl(String hostName){
+	public CoordinatorImpl(String hostName) throws IOException{
 		
-		factory.setHost(hostName);
-		waitAgent = new HashMap<Agent,String>();
-		doneTasks = new ArrayList<String>();
-		agentsConnected  = new ArrayList<Agent>();
+		
+		agentsRunners = new HashMap<String, AgentRunner>();
+
+		agentsConnected  = new ArrayList<AgentData>();
 		scripts = new ArrayList<String>();
 		logs = new ArrayList<String>();
 		
@@ -56,11 +49,14 @@ public class CoordinatorImpl implements Coordinator{
 	}
 
 	@Override
-	public List<Agent> getAllAgent() {
-
+	public List<AgentData> getAllAgent() {
+		for(AgentData a: agentsConnected){
+			PingAgent ping = new PingAgent(a,this,null);
+			ping.start();
+		}
 		try {
-			connectionAgents = factory.newConnection();
-        	channelAgents = connectionAgents.createChannel();
+			
+        	channelAgents = ConnectionManager.getInstance().getConnection().createChannel();
         	channelAgents.queueDeclare("agents", true, false, false, null);
         
         	final DefaultConsumer consumer = new DefaultConsumer(channelAgents) {
@@ -69,127 +65,56 @@ public class CoordinatorImpl implements Coordinator{
                 		 byte[] body) throws IOException
                  {             
                      String message = new String(body);
-                     Agent agent= AgentFactory.getAgent(message);
+                     AgentData agent= AgentFactory.getAgent(message);
                      agentsConnected.add(agent);
                      logs.add(agent.toString()); 
                  }
         	};
         	
         channelAgents.basicConsume("agents", true, consumer);
-		} catch (ShutdownSignalException | ConsumerCancelledException
-				| IOException e){
+		} catch (Exception e){
 			e.printStackTrace();
 			try {
 				channelAgents.close();
-				connectionAgents.close();
+				
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}
+		
+		
 		return agentsConnected;
 	}
 
 	@Override
 	public void play() {
 		//getResponsesOfAgent();
-		for(Agent a :agentsConnected){
-			a.setIndexOfScript(0);
-			nextAction(a,a.getIndexOfScript());
+		
+		for(AgentData a :agentsConnected){
+			AgentRunner runner = new AgentRunner(a, this);
+			agentsRunners.put(a.getId(), runner);
+			runner.start();
 		}
+		EventRegistry.getInstance().resetRegistry(agentsRunners);
+		ResponseDispatcher dispatcher = new ResponseDispatcher(agentsRunners);
+		dispatcher.start();
 	}
 	
-	public void nextAction(final Agent a, final int indexAction){
-		//if(!a.getPendingActions().isEmpty() && !a.itsWait()){
-			String action = a.getPendingActions().get(indexAction);
-			a.sendMsg(action);
-			try {
-				connectionResponses = factory.newConnection();
-				channelResponses = connectionResponses.createChannel();
-				channelResponses.queueDeclare("outputQueue", true, false, false, null);
-
-		        final DefaultConsumer consumer = new DefaultConsumer(channelResponses) {
-		                 @Override
-		                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-		                		 byte[] body) throws IOException
-		                 {
-		                     String message = new String(body);
-		                     System.out.println("####handleDelivery: " + message);
-		                     Response response = ResponsesFactory.responseOfAgent(message);
-		                     logs.add("[INFO]Received a response of: " + response.getId() +" "+ response.getAction());
-		                     for(Agent a : agentsConnected){
-		                    		if(a.getId().equals(response.getAgent())){
-		                    			logs.add("[INFO]Response of agent identified: "+a.getId());
-		                    			a.addResponse(response);
-		                    			
-		                    			if(response.getAction().equals("waitUntil")){
-		                    				logs.add("####processing 'waitUntil', agent waiting");
-			                    			//System.out.println("####comprobando identificacion de respuesta: "+response.getId().split(".")[1]);
-			                    			a.setItsWait(true);
-						                    waitAgent.put(a, (String) response.getId().subSequence(2, 3));
-			                    			
-					                    }
-		                    			if(response.getAction().equals("end")){
-		                    				logs.add("####processing 'end'");
-			                    			String splt = (String) response.getId().subSequence(0, 1);
-			                    			a.setIndexOfScript(a.getIndexOfScript()+1);
-			                    			logs.add("####viene el for");
-			                    				doneTasks.add(splt);
-			                    				for(Agent ag : waitAgent.keySet()){
-			                    					logs.add("####dentro del for "+ waitAgent.get(ag));
-						                    		logs.add("#### agente y numero asociado" + ag.toString() + " no: "+splt);
-						                    		if(waitAgent.get(ag).equals(splt)){
-						                    			agentsConnected.get(agentsConnected.indexOf(ag)).setItsWait(false);
-						                    			logs.add("agent "+ ag.toString()+" is not wait now.");
-						                    			logs.add("####indice de accion: "+ag.getIndexOfScript());
-						                    			logs.add("[INFO]throw 'next action' for "+ ag.getId());
-						                    			nextAction(agentsConnected.get(agentsConnected.indexOf(ag)), ag.getIndexOfScript());
-						                    			//waitAgent.remove(ag);
-						                    		}
-						                    	}
-					                    	if(a.getPendingActions().size()>a.getIndexOfScript() && !a.itsWait()){
-					                    		System.out.println("####lanzando siguiente accion");
-					                    		logs.add("[INFO]Throw next action of " + a.getId());
-					                 			nextAction(a, a.getIndexOfScript());
-					                 		} 
-					                    }
-		                    		}	
-		                     }
-		                     
-		                     if(response.getData().equals("false")){
-		                    	 logs.add("[ERROR] Agent " + response.getAgent()+ " couldn't complete the action " + response.getId());
-		                     }else{
-		                    	 logs.add("[INFO] Agent " + response.getAgent()+ " complete the action " + response.getId());
-		                     }
-		                     
-		                 }
-				};
-				channelResponses.basicConsume("outputQueue", true, consumer);
-			} catch (IOException e) {
-				e.printStackTrace();
-				logs.add("[ERROR]Method \"nextAction()\" in class CoordinatorImpl");
-			}
-		//}
-	}
 
 
-	public List<Agent> getAgentsConnected() {
+	public List<AgentData> getAgentsConnected() {
+		
 		return agentsConnected;
 	}
 	@Override
 	public void stop() {
 		
-		try {
-			channelAgents.close();
-			channelResponses.close();
-		} catch (IOException e) {
-			System.out.println("Can't close connection's channels");
-			e.printStackTrace();
-		}
+		
 	}
 
 	@Override
 	public void addScript(String script, String id) {
-		for (Agent a: agentsConnected){
+		for (AgentData a: agentsConnected){
 			if (a.getId().equals(id)){
 				a.addAction(script);
 				break;
@@ -203,89 +128,6 @@ public class CoordinatorImpl implements Coordinator{
 	}
 	
 
-	@Override
-	public void getResponsesOfAgent() {
-//		
-//		try {
-//			connectionResponses = factory.newConnection();
-//			 channelResponses = connectionResponses.createChannel();
-//			 channelResponses.queueDeclare("outputQueue", true, false, false, null);
-//
-//	        final DefaultConsumer consumer = new DefaultConsumer(channelResponses) {
-//	                 @Override
-//	                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-//	                		 byte[] body) throws IOException
-//	                 {
-//	                     String message = new String(body);
-//	                     System.out.println("######### handleDelivery: " + message);
-//	                     Response response = ResponsesFactory.responseOfAgent(message);
-//	                     System.out.println(" herecibido una respuesta: " + response.getId() +" "+ response.getAction() );
-//	                     
-//	                     for(Agent a : agentsConnected){
-//	                    		if(a.getId().equals(response.getAgent())){
-//	                    			a.addResponse(response);
-//	                    			
-//	                    			if(response.getAction().equals("end")){
-//	                    				
-//	                    				System.out.println(" he recibido un end: " + response.getAction());
-//	                    				
-//		                    			String[] responseDates = response.getId().split(".");
-//		                    			for(Agent agent:waitingAgents.keySet()){
-//		                    				for(Integer i: waitingAgents.get(agent)){
-//		                    					if(i == new Integer(responseDates[0])){
-//		                    						System.out.println("exixte tarea de espera asocada");
-//		                    						waitingAgents.get(agent).remove(i);
-//		                    						if(waitingAgents.get(agent).isEmpty()){
-//		                    							System.out.println("devolviendo a estado activo");
-//		                    							agent.setItsWait(false);
-//		                    							System.out.println(agent.getId()+" it's not waiting now.");
-////		                    							nextAction(agentsConnected.indexOf(a));
-//		                    						}
-//		                    					}
-//		                    				}
-//		                    			}
-//		                    			
-//		                    			if(a.getPendingActions().isEmpty()){
-//		                    				System.out.println("[INFO] Agent "+a.getId()+" have not more actions, "+a.getId()+" has finished.");
-//		                    			}
-//		                    			System.out.println(" elimmino el primer script");
-//	                    				a.getPendingActions().remove(0);
-////	                    				System.out.println(" lanzando siguiente accion");
-////	                    				nextAction(agentsConnected.indexOf(a));
-//		                    		}
-//	                    			
-//	                    			if(response.getId().startsWith("R")){
-//	                    				System.out.println(" detectada espera " +response.getAction()+" "+response.getId()+" "+response.getAgent());
-//	                    				String[] responseDates = response.getId().split(".");
-//	                    				if(waitingAgents.keySet().contains(a)){
-//	                    					waitingAgents.get(a).add(new Integer(responseDates[1]));
-//	                    					System.out.println(a.getId()+" en espera.");
-//	                    				}else{
-//	                    					List<Integer> list = new ArrayList<Integer>();
-//	                    					list.add(new Integer(responseDates[1]));
-//	                    					waitingAgents.put(a, list);
-//	                    					a.setItsWait(true);
-//	                    					System.out.println(a.getId()+" en espera.");
-//	                    				}
-//	                    				a.getPendingActions().remove(0);
-//	                    			}
-//	                    			
-//	                    		}
-//	                     }
-//	                     if(response.getData().equals("true")){
-//	                    	 System.out.println("[INFO] Agent " + response.getAgent()+ " complete the action " + response.getId());
-//	                     }else{
-//	                    	 System.out.println("[ERROR] Agent " + response.getAgent()+ " couldn't complete the action " + response.getId());
-//	                     }
-//	                 }
-//			};
-//			channelResponses.basicConsume("outputQueue", true, consumer);
-////			channelResponses.close();
-////			connectionResponses.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			System.out.println("######### Error on method \"getReponsesOfAgent()\" in class CoordinatorImpl");
-//		}
-	}
+	
 
 }

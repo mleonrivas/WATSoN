@@ -1,15 +1,9 @@
 package com.want.rest;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.restlet.ext.servlet.internal.ServletCall;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Post;
-
-import com.want.utils.Action;
 
 public class UploadFile extends BaseResource{
 //	

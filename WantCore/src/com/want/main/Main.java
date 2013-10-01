@@ -3,14 +3,8 @@ package com.want.main;
 import java.io.IOException;
 
 import org.restlet.Component;
-import org.restlet.data.Form;
 import org.restlet.data.Protocol;
-import org.restlet.representation.Representation;
-import org.restlet.resource.ClientResource;
-import org.restlet.resource.ResourceException;
 
-import com.want.core.Coordinator;
-import com.want.core.CoordinatorImpl;
 import com.want.rest.ResourceApplication;
 
 
@@ -19,8 +13,9 @@ public class Main {
 	/**
 	 * @param args
 	 * @throws Exception 
-	 */
-	public static void main(String[] args) throws Exception {
+	 * @throws Exception 
+	 */ 
+	public static void main(String[] args) throws Exception{
 //		//create core
 //		Coordinator coordinator = new CoordinatorImpl("localhost");
 //		//add scripts

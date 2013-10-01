@@ -1,17 +1,9 @@
 package com.want.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import org.restlet.data.MediaType;
-import org.restlet.representation.Representation;
-import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
-import org.restlet.resource.Put;
 
-import com.want.core.Agent;
-import com.want.utils.Action;
-import com.want.utils.FileImporter;
+import com.want.core.Action;
+import com.want.core.AgentData;
 
 
 public class FileResource extends BaseResource{
@@ -21,9 +13,9 @@ public class FileResource extends BaseResource{
 	public String actions(){
 	
 		String res = "";
-		for(Agent a : getCoordinator().getAgentsConnected()){
-			for(String s:a.getPendingActions()){
-				res = res +"\n-----------------\n "+ s;
+		for(AgentData a : getCoordinator().getAgentsConnected()){
+			for(Action s: a.getPendingActions()){
+				res = res +"\n-----------------\n "+ s.getJSON();
 			}
 		}
 		return res;
