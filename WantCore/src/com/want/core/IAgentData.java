@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author  Gabriel
  */
-public interface AgentData {
+public interface IAgentData {
 	/**
 	 * @uml.property  name="id"
 	 */
@@ -24,15 +24,15 @@ public interface AgentData {
 	String getOS();
 	String toString();
 	List<Action> getPendingActions();
+	List<Action> getCompletedActions();
 	void disconnect();
 	boolean checkConnection();
 	void addAction(String action);
-	//void setPendingActions(List<String> actions);
 	void sendMsg(String msg);
 	void addResponse(Response response);
 	List<Response> getReponses();
-	boolean itsWait();
-	void setItsWait(boolean wait);
-	Integer getIndexOfScript();
-	void setIndexOfScript(Integer indexOfScript);
+	//boolean itsWait();
+	//void setItsWait(boolean wait);
+	//Integer getIndexOfScript();
+	//void setIndexOfScript(Integer indexOfScript);
 }

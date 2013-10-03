@@ -2,7 +2,7 @@ package com.want.rest;
 
 import org.restlet.resource.Get;
 
-import com.want.core.AgentData;
+import com.want.core.IAgentData;
 
 public class AgentResource extends BaseResource{
 	
@@ -14,7 +14,7 @@ public class AgentResource extends BaseResource{
 	@Get
 	public String agents(){
 		String res = "";
-		for(AgentData a:getAgentsConnected()){
+		for(IAgentData a:getAgentsConnected()){
 			res = res + a.getId() + "\n";
 		}
 		return res;

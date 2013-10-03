@@ -3,7 +3,7 @@ package com.want.rest;
 import org.restlet.resource.Get;
 
 import com.want.core.Action;
-import com.want.core.AgentData;
+import com.want.core.IAgentData;
 
 
 public class FileResource extends BaseResource{
@@ -13,7 +13,7 @@ public class FileResource extends BaseResource{
 	public String actions(){
 	
 		String res = "";
-		for(AgentData a : getCoordinator().getAgentsConnected()){
+		for(IAgentData a : getCoordinator().getAgentsConnected()){
 			for(Action s: a.getPendingActions()){
 				res = res +"\n-----------------\n "+ s.getJSON();
 			}

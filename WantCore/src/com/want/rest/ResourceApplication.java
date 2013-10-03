@@ -9,21 +9,21 @@ import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
-import com.want.core.AgentData;
-import com.want.core.Coordinator;
+import com.want.core.IAgentData;
+import com.want.core.ICoordinator;
 import com.want.core.CoordinatorImpl;
 public class ResourceApplication extends Application{
 	
 		private final ConcurrentMap<String, List<String>> items = 
             new ConcurrentHashMap<String, List<String>>();
 		
-			private final Coordinator coordinator;
+			private final ICoordinator coordinator;
 		
-			private List<AgentData> agentConnected;
+			private List<IAgentData> agentConnected;
 		
 		public ResourceApplication() throws IOException{
 			coordinator = new CoordinatorImpl("localhost");
-			agentConnected = coordinator.getAllAgent();
+			
 		}
 		
 	 	@Override
@@ -53,10 +53,10 @@ public class ResourceApplication extends Application{
 		public ConcurrentMap<String, List<String>> getItems() {
 			return items;
 		}
-		public Coordinator getCoordinator(){
+		public ICoordinator getCoordinator(){
 			return coordinator;
 		}
-		public List<AgentData> getAgentsConnected(){
-			return agentConnected;
+		public List<IAgentData> getAgentsConnected(){
+			return coordinator.getAllAgent();
 		}
 }

@@ -2,23 +2,20 @@ package com.want.core;
 
 public class AgentRunner extends Thread {
 
-	private AgentData agent;
+	private IAgentData agent;
 
 	private boolean isFinished;
-
-	private int indexAction;
 
 	private Response response;
 
 	private boolean doingPing;
 
-	private Coordinator coordinator;
+	private ICoordinator coordinator;
 
-	public AgentRunner(AgentData a, Coordinator c) {
+	public AgentRunner(IAgentData a, ICoordinator c) {
 		doingPing = false;
 		agent = a;
 		isFinished = false;
-		indexAction = 0;
 		coordinator = c;
 	}
 
@@ -27,7 +24,7 @@ public class AgentRunner extends Thread {
 		while (!isFinished && !Thread.currentThread().isInterrupted()) {
 			int counter = 0;
 			response = null;
-			Action action = agent.getPendingActions().get(indexAction);
+			Action action = agent.getPendingActions().remove(0);
 			System.out.println("###$$$### action: " + action.getJSON());
 			if (action.getAction().equals("wait")) {
 				try {
@@ -63,7 +60,7 @@ public class AgentRunner extends Thread {
 				// + response.getAction());
 				if (response != null && response.getAction().equals("exist")
 						&& !response.getData().equals("true")) {
-					indexAction--;
+					agent.getPendingActions().add(0, action);
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -82,15 +79,14 @@ public class AgentRunner extends Thread {
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 							Thread.currentThread().interrupt();
-							indexAction = Integer.MAX_VALUE;
+							agent.getPendingActions().clear();
 							break;
 						}
 					}
 				}
 
 			}
-			indexAction++;
-			isFinished = agent.getPendingActions().size() <= indexAction;
+			isFinished = agent.getPendingActions().size() <= 0;
 		}
 	}
 

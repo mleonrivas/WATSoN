@@ -5,11 +5,11 @@ import java.util.UUID;
 
 public class PingAgent extends Thread{
 	
-	private AgentData agent;
+	private IAgentData agent;
 	private AgentRunner runner;
-	private Coordinator coordinator;
+	private ICoordinator coordinator;
 	
-	public PingAgent(AgentData a, Coordinator c, AgentRunner r){
+	public PingAgent(IAgentData a, ICoordinator c, AgentRunner r){
 		agent = a;
 		coordinator = c;
 		runner = r;
@@ -27,6 +27,7 @@ public class PingAgent extends Thread{
 		a.setData("");
 		a.setLocalizator("");
 		a.setLocalParam("");
+		a.setAction("ping");
 		agent.sendMsg(a.getJSON());
 		int counter = 0;
 		while(!EventRegistry.getInstance().existEvent(id) && counter<10){

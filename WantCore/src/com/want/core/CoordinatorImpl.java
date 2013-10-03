@@ -2,6 +2,7 @@ package com.want.core;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,12 +15,12 @@ import com.rabbitmq.client.Envelope;
 import com.want.amqp.ConnectionManager;
 import com.want.factory.AgentFactory;
 @XmlRootElement
-public class CoordinatorImpl implements Coordinator{
+public class CoordinatorImpl implements ICoordinator{
 	
 
 	
 
-	private List<AgentData> agentsConnected;
+	private List<IAgentData> agentsConnected;
 
 	private List<String> scripts;
 	
@@ -34,10 +35,12 @@ public class CoordinatorImpl implements Coordinator{
 		
 		agentsRunners = new HashMap<String, AgentRunner>();
 
-		agentsConnected  = new ArrayList<AgentData>();
+		agentsConnected  = new ArrayList<IAgentData>();
 		scripts = new ArrayList<String>();
 		logs = new ArrayList<String>();
-		
+		EventRegistry.getInstance().resetRegistry(agentsRunners);
+		ResponseDispatcher dispatcher = new ResponseDispatcher(agentsRunners);
+		dispatcher.start();
 	}
 	@Override
 	public List<String> getServerLogs(){
@@ -49,11 +52,14 @@ public class CoordinatorImpl implements Coordinator{
 	}
 
 	@Override
-	public List<AgentData> getAllAgent() {
-		for(AgentData a: agentsConnected){
+	public List<IAgentData> getAllAgent() {
+		List<PingAgent> pings = new LinkedList<PingAgent>();
+		for(IAgentData a: agentsConnected){
 			PingAgent ping = new PingAgent(a,this,null);
+			pings.add(ping);
 			ping.start();
 		}
+		
 		try {
 			
         	channelAgents = ConnectionManager.getInstance().getConnection().createChannel();
@@ -65,7 +71,7 @@ public class CoordinatorImpl implements Coordinator{
                 		 byte[] body) throws IOException
                  {             
                      String message = new String(body);
-                     AgentData agent= AgentFactory.getAgent(message);
+                     IAgentData agent= AgentFactory.getAgent(message);
                      agentsConnected.add(agent);
                      logs.add(agent.toString()); 
                  }
@@ -81,7 +87,13 @@ public class CoordinatorImpl implements Coordinator{
 				e1.printStackTrace();
 			}
 		}
-		
+		while(pingsStillAlive(pings)){
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		return agentsConnected;
 	}
@@ -90,19 +102,18 @@ public class CoordinatorImpl implements Coordinator{
 	public void play() {
 		//getResponsesOfAgent();
 		
-		for(AgentData a :agentsConnected){
+		for(IAgentData a :agentsConnected){
 			AgentRunner runner = new AgentRunner(a, this);
 			agentsRunners.put(a.getId(), runner);
 			runner.start();
 		}
 		EventRegistry.getInstance().resetRegistry(agentsRunners);
-		ResponseDispatcher dispatcher = new ResponseDispatcher(agentsRunners);
-		dispatcher.start();
+		
 	}
 	
 
 
-	public List<AgentData> getAgentsConnected() {
+	public List<IAgentData> getAgentsConnected() {
 		
 		return agentsConnected;
 	}
@@ -114,7 +125,7 @@ public class CoordinatorImpl implements Coordinator{
 
 	@Override
 	public void addScript(String script, String id) {
-		for (AgentData a: agentsConnected){
+		for (IAgentData a: agentsConnected){
 			if (a.getId().equals(id)){
 				a.addAction(script);
 				break;
@@ -127,7 +138,14 @@ public class CoordinatorImpl implements Coordinator{
 		this.scripts.add(script);
 	}
 	
-
+	private boolean pingsStillAlive(List<PingAgent> pings){
+		for(PingAgent ping: pings){
+			if(ping.isAlive()){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 
 }

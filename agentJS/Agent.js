@@ -25,11 +25,14 @@ function processListOfActions(list,i){
 function processAction(action, callbackFunction){
 	//alert(action.action);
 	switch(action.action){
+		case "ping":
+			createResponse(action, true);
+			callbackFunction.apply();
+			break;
 		case "click":
 			sendLog(writeDebugLog("Agent " + id + " Received a \"click\" event: "+ action.id ));
 			var res=false;
-			var elementAux1 = document.evaluate(action.localParam,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
-			var element = elementAux1.snapshotItem(action.data);
+			var element = identifyElement(action.localizator, action.localParam, action.data);
 			element.click();
 			if(document.createEvent){
 				res=true;
@@ -40,8 +43,7 @@ function processAction(action, callbackFunction){
 			break;
 		case "focus":
 			sendLog(writeDebugLog("Agent " + id + " Received a \"focus\" event: "+ action.id));
-			var elementAux1 = document.evaluate(action.localParam,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
-			var element = elementAux1.snapshotItem(elementAux1.snapshotLength-1);
+			var element = identifyElement(action.localizator, action.localParam, action.data);
 			element.focus();
 			createResponse(action, false);
 			callbackFunction.apply();
@@ -51,22 +53,8 @@ function processAction(action, callbackFunction){
 			var res=true;
 			var count = 0;
 			var elementAux1 = document.evaluate(action.localParam,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
-				var element = elementAux1.snapshotItem(action.data);
-				if(element==null){
-					while(element!=null){
-						setinterval(count++,1000);
-						if(count = 20){
-							res = false;
-							sendLog(writeDebugLog("Agent " + action.id + "not found."));
-							break;
-						}
-					}
-					//sendLog(writeDebugLog("Agent " + action.id + "not found."));
-				}else{
-					res=true;
-					actionFinishedOK = actionFinishedOK && res;
-				}
-			createResponse(action, true);
+			res = elementAux1.snapshotLength>0;
+			createResponse(action, res);
 			callbackFunction.apply();
 			break;
 		case "keypress":
@@ -83,8 +71,7 @@ function processAction(action, callbackFunction){
 		case "changeValue":
 			sendLog(writeDebugLog("Agent " + id + " Received a \"changeValue\" event: "+ action.id));
 			var res = false;
-			var elementAux2 = document.evaluate(action.localParam,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
-			var textbox = elementAux2.snapshotItem(action.data);	
+			var textbox = identifyElement(action.localizator, action.localParam, action.data);
 			textbox.value = action.configuration;	
 			if (document.createEvent) {     
 		        var changeEvent = document.createEvent ("HTMLEvents");
@@ -96,6 +83,14 @@ function processAction(action, callbackFunction){
 			}else{
 				sendLog(writeDebugLog("[LOG textbox]Agent " + id + " " + textbox.value + " " + textbox.Text));
 			}
+			createResponse(action, res);
+			callbackFunction.apply();
+			break;
+		case "changeInnerHTML":
+			sendLog(writeDebugLog("Agent " + id + " Received a \"changeValue\" event: "+ action.id));
+			var res = true;
+			var element = identifyElement(action.localizator, action.localParam, action.data);
+			element.innerHTML = action.configuration;	
 			createResponse(action, res);
 			callbackFunction.apply();
 			break;
@@ -213,6 +208,7 @@ $('#first input').focus(function() {
 });
 
 function createResponse(action,itsOkey){
+    
     var response = "{response:[" +
     					"\n{" +
     						"\nid: "+ action.id + "," +
@@ -224,3 +220,33 @@ function createResponse(action,itsOkey){
     client.send('/queue/outputQueue',{},response);
     sendLog(writeDebugLog("Agent " + id + "reply: " + response));
 }
+
+function identifyElement(method, data, index){
+	var result = null;
+	switch(method){
+		case "id":
+			result = document.getElementById(data);
+			break;
+		case "xpath":
+			var el = document.evaluate(data,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
+			if(index=="last"){
+				result = el.snapshotItem(el.snapshotLength-1);
+			}else{
+				result = el.snapshotItem(index);
+			}
+			
+			break;
+		case "nestedXpath":
+			var aid = data.split(";")
+			var el = document.evaluate(aid[1], document.evaluate(aid[0], document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0).contentDocument, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+			if(index=="last"){
+				result = el.snapshotItem(el.snapshotLength-1);
+			}else{
+				result = el.snapshotItem(index);
+			}
+			break;
+	}
+	return result;
+}
+
+

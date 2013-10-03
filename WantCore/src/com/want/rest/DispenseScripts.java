@@ -11,7 +11,7 @@ import org.restlet.resource.Put;
 import com.google.gson.Gson;
 import com.want.core.Action;
 import com.want.core.ActionSet;
-import com.want.core.AgentData;
+import com.want.core.IAgentData;
 
 public class DispenseScripts extends BaseResource{
 	
@@ -32,8 +32,8 @@ public class DispenseScripts extends BaseResource{
 		System.out.println(action);
 		init();
 		String res = "";
-		for(AgentData a : getCoordinator().getAgentsConnected()){
-			if(a.getId().equals(agent)&&getCoordinator().getScripts().contains(action)){
+		for(IAgentData a : getCoordinator().getAgentsConnected()){
+			if(a.getId().equals(agent) && getCoordinator().getScripts().contains(action)){
 				//a.addAction(action);
 				getCoordinator().addScript(action, a.getId());
 				res = a.getId() + " " + a.getPendingActions().get(0).getJSON();
@@ -47,7 +47,7 @@ public class DispenseScripts extends BaseResource{
 	@Get
 	public String sayTheChanges(){
 		String res = "";
-		for(AgentData a: getCoordinator().getAgentsConnected()){
+		for(IAgentData a: getCoordinator().getAgentsConnected()){
 			res = res + a.getId()+ " will do it the tasks: ";
 			for(Action script : a.getPendingActions()){
 				res = res + script.getJSON() + "\n";
@@ -62,7 +62,7 @@ public class DispenseScripts extends BaseResource{
 		Gson gson = new Gson();
 		ActionSet set = gson.fromJson(action, ActionSet.class);
 		init();
-		for(AgentData a:getCoordinator().getAgentsConnected()){
+		for(IAgentData a:getCoordinator().getAgentsConnected()){
 			if(a.getId().equals(agent)){
 				a.getPendingActions().removeAll(Arrays.asList(set.getActions()));
 				System.out.println("An action is removed of agent "+a.getId());

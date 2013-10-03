@@ -35,7 +35,9 @@ public class ResponseDispatcher extends Thread {
                      System.out.println("####handleDelivery: " + message);
                      Response response = ResponsesFactory.responseOfAgent(message);
                      //logs.add("[INFO]Received a response of: " + response.getId() +" "+ response.getAction());
-	        		 runners.get(response.getAgent()).notifyResponse(response);
+	        		 if(runners.containsKey(response.getAgent())){
+	        			 runners.get(response.getAgent()).notifyResponse(response);
+	        		 }
 	        		 EventRegistry.getInstance().notifyEvent(response);
                  }
 		

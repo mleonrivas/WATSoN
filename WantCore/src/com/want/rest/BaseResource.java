@@ -4,17 +4,17 @@ import java.util.List;
 
 import org.restlet.resource.ServerResource;
 
-import com.want.core.AgentData;
-import com.want.core.Coordinator;
+import com.want.core.IAgentData;
+import com.want.core.ICoordinator;
 
 public class BaseResource extends ServerResource{
 
     
-    protected Coordinator getCoordinator(){
+    protected ICoordinator getCoordinator(){
     	return ((ResourceApplication) getApplication()).getCoordinator();
     }
     
-    protected List<AgentData> getAgentsConnected(){
+    protected List<IAgentData> getAgentsConnected(){
     	return ((ResourceApplication) getApplication()).getAgentsConnected();
     }
   
