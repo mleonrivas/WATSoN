@@ -12,6 +12,8 @@ public class ConnectionManager {
 	
 	private ConnectionManager() throws IOException{
 		factory = new ConnectionFactory();
+		factory.setHost("127.0.0.1");
+		factory.setPort(5671);
 		connection = factory.newConnection();
 	}
 	

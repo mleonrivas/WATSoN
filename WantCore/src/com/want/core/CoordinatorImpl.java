@@ -30,7 +30,7 @@ public class CoordinatorImpl implements ICoordinator{
 	
 	private Channel channelAgents;
 	
-	public CoordinatorImpl(String hostName) throws IOException{
+	public CoordinatorImpl() throws IOException{
 		
 		
 		agentsRunners = new HashMap<String, AgentRunner>();

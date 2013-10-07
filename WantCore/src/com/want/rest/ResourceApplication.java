@@ -22,7 +22,7 @@ public class ResourceApplication extends Application{
 			private List<IAgentData> agentConnected;
 		
 		public ResourceApplication() throws IOException{
-			coordinator = new CoordinatorImpl("localhost");
+			coordinator = new CoordinatorImpl();
 			
 		}
 		
