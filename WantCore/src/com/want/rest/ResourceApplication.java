@@ -19,7 +19,7 @@ public class ResourceApplication extends Application{
 		
 			private final ICoordinator coordinator;
 		
-			private List<IAgentData> agentConnected;
+			//private List<IAgentData> agentConnected;
 		
 		public ResourceApplication() throws IOException{
 			coordinator = new CoordinatorImpl();

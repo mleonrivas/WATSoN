@@ -6,6 +6,9 @@ public class ServerLogs extends BaseResource{
 	
 	@Get
 	public String getLogs(){
+		//Gson gson = new Gson();
+		//return gson.toJson(getCoordinator().getServerLogs());
+		
 		String res = "";
 		if(!getCoordinator().getServerLogs().isEmpty()){
 			for(String s:getCoordinator().getServerLogs()){

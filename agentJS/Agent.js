@@ -3,7 +3,7 @@ var browser;
 var browserVersion;
 var oS;
 var actionFinishedOK = true;
-
+var host = "193.147.175.243";
 function readData(data) {
 	var message = eval("(" + data + ");");
 	window.x=message;
@@ -177,7 +177,7 @@ function sendLog(log){
 	client.send('/queue/logs',{},log);
 }
 
-var ws = new SockJS('http://localhost:15674/stomp');
+var ws = new SockJS('http://' + host + ':15674/stomp');
 var client = Stomp.over(ws);
 
 client.heartbeat.outgoing = 0;

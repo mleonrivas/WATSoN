@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.want.utils.ConfigurationProperties;
 
 public class ConnectionManager {
 	private static ConnectionManager instance=null;
@@ -12,8 +13,8 @@ public class ConnectionManager {
 	
 	private ConnectionManager() throws IOException{
 		factory = new ConnectionFactory();
-		factory.setHost("127.0.0.1");
-		factory.setPort(5671);
+		factory.setHost(ConfigurationProperties.getInstance().getProperties().getProperty("rabbitmq_server", "127.0.0.1"));
+		factory.setPort(new Integer(ConfigurationProperties.getInstance().getProperties().getProperty("rabbitmq_port", "5671")));
 		connection = factory.newConnection();
 	}
 	
