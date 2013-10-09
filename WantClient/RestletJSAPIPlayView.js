@@ -8,7 +8,7 @@ function getAgentsPV(){
 		    if (xmlHttp.readyState==4 && xmlHttp.status==200){
 		      	}
 	}
-	xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/agents", false );
+	xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/rest/agents", false );
 	xmlHttp.send();
 	drawContentPV(xmlHttp.responseText);
 	return xmlHttp.responseText;
@@ -22,7 +22,7 @@ function getResponsesOfAgents(agent){
 				document.getElementById('responsesTextArea').innerHTML = xmlHttp.responseText;
 		    }
 		}
-		xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/responses/"+agent, true );
+		xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/rest/responses/"+agent, true );
 		xmlHttp.send();
 		//drawResponsesAgent(xmlHttp);
 		return xmlHttp;
@@ -56,7 +56,7 @@ function getServerLogs(){
 			document.getElementById("textAreaLogs").innerHTML= xmlHttp.responseText;
 		}
 	}
-	xmlHttp.open("GET","http://" + host + ":" + port+ "/WantCore/logs",true);
+	xmlHttp.open("GET","http://" + host + ":" + port+ "/WantCore/rest/logs",true);
 	xmlHttp.send();
 }
 function drawResponsesAgent(xmlHttp){

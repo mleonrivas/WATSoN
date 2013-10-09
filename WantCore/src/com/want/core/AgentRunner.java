@@ -10,18 +10,18 @@ public class AgentRunner extends Thread {
 
 	private boolean doingPing;
 
-	private ICoordinator coordinator;
-
-	public AgentRunner(IAgentData a, ICoordinator c) {
+	private boolean forceFinish;
+	
+	public AgentRunner(IAgentData a) {
 		doingPing = false;
 		agent = a;
 		isFinished = false;
-		coordinator = c;
+		forceFinish=false;
 	}
 
 	public void run() {
 
-		while (!isFinished && !Thread.currentThread().isInterrupted()) {
+		while (!isFinished && !Thread.currentThread().isInterrupted() && !forceFinish) {
 			int counter = 0;
 			response = null;
 			Action action = agent.getPendingActions().remove(0);
@@ -50,7 +50,7 @@ public class AgentRunner extends Thread {
 							+ agent.getId());
 
 					try {
-						Thread.sleep(500);
+						Thread.sleep(200);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 						break;
@@ -70,7 +70,7 @@ public class AgentRunner extends Thread {
 
 				if (response == null) {
 					// start ping
-					PingAgent ping = new PingAgent(agent, coordinator, this);
+					PingAgent ping = new PingAgent(agent);
 					ping.start();
 					doingPing = true;
 					while (doingPing == true) {
@@ -126,4 +126,14 @@ public class AgentRunner extends Thread {
 
 	}
 
+	public boolean isForceFinish() {
+		return forceFinish;
+	}
+
+	public void setForceFinish(boolean forceFinish) {
+		this.forceFinish = forceFinish;
+	}
+
+	
+	
 }

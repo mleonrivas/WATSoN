@@ -186,13 +186,16 @@ client.heartbeat.incoming = 0;
 var on_connect = function(x) {
 	discharge();
 	sendLog(writeDebugLog("Agent " + id + " Conected to server..."));
-	idnt = client.subscribe('inputQueue',function(d) {
-		var aux = d.body.split("X.");
-		if(aux[0] == id){
-			readData(aux[1]);
-		}else{
-			sendLog(writeDebugLog(id+": El msg no es mio"));
-		}
+	idnt = client.subscribe('input-agent-' + id,function(d) {
+		//var aux = d.body.split("X.");
+		//if(aux[0] == id){
+		//	readData(aux[1]);
+		//}else{
+		//	sendLog(writeDebugLog(id+": El msg no es mio"));
+		//}
+		var aux = d.body;
+		readData(aux);
+		
     });
 };
 var on_error =  function() {

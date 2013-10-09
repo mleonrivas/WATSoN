@@ -7,6 +7,8 @@ public class DefaultProperties {
 	public static final String DEFAULT_DOMAIN_PARSER = "com.want.domains.DefaultAcionsParser";
 	public static final String DEFAULT_WAIT_TIME_AFTER_CLICK_BUTTON = "3000";
 	public static final String DEFAULT_WAIT_TIME_AFTER_CLICK_TAB = "2000";
+	public static final String EXCHANGE_NAME = "WatsonGateway";
+	public static final String AGENT_QUEUE_PATTERN = "input-agent-";
 	
 	
 }

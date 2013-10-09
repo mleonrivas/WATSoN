@@ -7,7 +7,7 @@
 		    	if (xmlHttp.readyState==4 && xmlHttp.status==200){
 		      	 }
 		    }
-		    xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/agents", false );
+		    xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/rest/agents", false );
 			xmlHttp.send();
 			drawContent(xmlHttp.responseText);
 			return xmlHttp.responseText;
@@ -15,7 +15,7 @@
 		function getScripts(){
 			var xmlHttp = null;
 		    xmlHttp = new XMLHttpRequest();
-		    xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/files", true );
+		    xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/rest/files", true );
 		    xmlHttp.send();
 		    return xmlHttp.responseText;
 		}
@@ -40,7 +40,7 @@
 				        return function(e) {
 				        	var xmlHttp = null;
 						    xmlHttp = new XMLHttpRequest();
-						    xmlHttp.open( "POST", "http://" + host + ":" + port+ "/WantCore/fileUpload/", true );
+						    xmlHttp.open( "POST", "http://" + host + ":" + port+ "/WantCore/rest/fileUpload/", true );
 						    xmlHttp.send(theFile);
 							dispenseTask(theFile,agent);
 							//dispenseTask(reader.readAsText(f),agent);
@@ -55,19 +55,19 @@
 		function play(){
 			var xmlHttp = null;
 		    xmlHttp = new XMLHttpRequest();
-		    xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/play", true );
+		    xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/rest/play", true );
 		    xmlHttp.send();
 		}
 		function removeScript(action){
 			var xmlHttp = null;
 		    xmlHttp = new XMLHttpRequest();
-			xmlHttp.open( "DELETE", "http://" + host + ":" + port+ "/WantCore/add/"+agent, true );
+			xmlHttp.open( "DELETE", "http://" + host + ":" + port+ "/WantCore/rest/add/"+agent, true );
 		    xmlHttp.send(action);
 		}
 		function dispenseTask(action,agent){
 			var xmlHttp = null;
 		    xmlHttp = new XMLHttpRequest();
-			xmlHttp.open( "PUT", "http://" + host + ":" + port+ "/WantCore/add/"+agent, true );
+			xmlHttp.open( "PUT", "http://" + host + ":" + port+ "/WantCore/rest/add/"+agent, true );
 		    xmlHttp.send(action);
 			addImg(agent, action);
 		}
@@ -83,7 +83,7 @@
 		function getDispensedTasks(){
 			var xmlHttp = null;
 		    xmlHttp = new XMLHttpRequest();
-		    xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/add/"+agent, true );
+		    xmlHttp.open( "GET", "http://" + host + ":" + port+ "/WantCore/rest/add/"+agent, true );
 		    xmlHttp.send();
 		}
 		function drawContent(xmlHttp){

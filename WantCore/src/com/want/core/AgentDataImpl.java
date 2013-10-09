@@ -1,12 +1,9 @@
 package com.want.core;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import au.com.bytecode.opencsv.CSVReader;
-
-import com.google.gson.Gson;
+import com.want.amqp.Message;
 import com.want.utils.DomainActionsParserHelper;
 import com.want.utils.Ping;
 
@@ -26,10 +23,6 @@ public class AgentDataImpl implements IAgentData{
 	
 	private List<Response> responses;
 	
-	private boolean wait;
-	
-	private Integer indexOfScript;
-	
 	public AgentDataImpl(){
 		
 	}
@@ -41,8 +34,6 @@ public class AgentDataImpl implements IAgentData{
 		pendingActions = new ArrayList<Action>();
 		completedActions = new ArrayList<Action>();
 		responses = new ArrayList<Response>();
-		wait = false;
-		indexOfScript = 0;
 	}
 	
 	@Override
@@ -80,7 +71,7 @@ public class AgentDataImpl implements IAgentData{
 	}
 	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub	
+		throw new UnsupportedOperationException("not implemented yet");
 	}
 	@Override
 	public boolean checkConnection() {
@@ -88,28 +79,25 @@ public class AgentDataImpl implements IAgentData{
 	}
 	@Override
 	public void addAction(String actions) {
-//		Gson gson= new Gson();
-//		ActionSet set = gson.fromJson(actions, ActionSet.class);
-//		for(int i=0; i<set.getActions().length; i++){
-//			Action a = set.getActions()[i];
-//			pendingActions.add(a);
-//			//System.out.println(" %% %% ADD ACTION: %% %% " + a.getId() + ": " + a.getAction());
-//		}
+
 		IDomainActionsParser parser = DomainActionsParserHelper.getDomainActionsParser();
 		ActionSet set = parser.parseDomainActions(actions);
 		for(int i=0; i<set.getActions().length; i++){
 			Action a = set.getActions()[i];
 			pendingActions.add(a);
-			//System.out.println(" %% %% ADD ACTION: %% %% " + a.getId() + ": " + a.getAction());
+			
 		}
-		
-		
-		
+
 	}
 	@Override
 	public void sendMsg(String msg){
-		IMessage message = new MessageImpl();
-		message.sendMsg(msg, id);
+		Message m = new Message(id, msg);
+		try {
+			MessageQueue.getInstance().getQueue().put(m);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	@Override
 	public void addResponse(Response response){
@@ -119,24 +107,6 @@ public class AgentDataImpl implements IAgentData{
 	public List<Response> getReponses(){
 		return responses;
 	}
-//	@Override
-//	public boolean itsWait() {
-//		return wait;
-//	}
-//	@Override
-//	public void setItsWait(boolean wait) {
-//		this.wait = wait;
-//	}
-	
-	
-//  @Override
-//	public Integer getIndexOfScript() {
-//		return indexOfScript;
-//	}
-//	@Override
-//	public void setIndexOfScript(Integer indexOfScript) {
-//		this.indexOfScript = indexOfScript;
-//	}
 	
 	@Override
 	public int hashCode() {

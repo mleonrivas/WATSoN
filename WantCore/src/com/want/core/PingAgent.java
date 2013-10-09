@@ -7,12 +7,10 @@ public class PingAgent extends Thread{
 	
 	private IAgentData agent;
 	private AgentRunner runner;
-	private ICoordinator coordinator;
 	
-	public PingAgent(IAgentData a, ICoordinator c, AgentRunner r){
+	public PingAgent(IAgentData a){
 		agent = a;
-		coordinator = c;
-		runner = r;
+		runner = AgentsRegistry.getInstance().getAgentRunners().get(agent.getId());
 	}
 	
 	public void run(){
@@ -34,7 +32,7 @@ public class PingAgent extends Thread{
 			counter++;
 			System.out.println(" ### $$$ COUNTING ... " + agent.getId());
 			try {
-				Thread.sleep(500);
+				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -42,10 +40,7 @@ public class PingAgent extends Thread{
 		
 		if(!EventRegistry.getInstance().existEvent(id)){
 			System.out.println(" ### $$$ STOPPING " + agent.getId());
-			if(runner!=null && runner.isAlive()){
-					runner.interrupt();
-			}
-			coordinator.getAgentsConnected().remove(agent);
+			AgentsRegistry.getInstance().removeAgent(agent.getId());
 		}
 		
 		if(runner!=null && runner.isAlive()){

@@ -1,7 +1,6 @@
 package com.want.utils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 
 public class FileImporter {
@@ -12,16 +11,13 @@ public class FileImporter {
 	String name;
 	public FileImporter(String url){
 		content="";
-		File archivo = null;
-	      FileReader fr = null;
+		FileReader fr = null;
 	      BufferedReader br = null;
 	 
 	      try {
 	         // Apertura del fichero y creacion de BufferedReader para poder
 	         // hacer una lectura comoda (disponer del metodo readLine()).
 	    	  
-	         archivo = new File (name);
-	         
 	         fr = new FileReader (url);
 	         //fr = new FileReader ("WEB_INF/scripts/"+ archivo);
 	         br = new BufferedReader(fr);

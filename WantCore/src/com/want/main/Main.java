@@ -1,7 +1,5 @@
 package com.want.main;
 
-import java.io.IOException;
-
 import org.restlet.Component;
 import org.restlet.data.Protocol;
 

@@ -7,8 +7,6 @@ public class EventRegistry {
 	
 	private static EventRegistry instance = null;
 	
-	private Map<String,AgentRunner> runners;
-	
 	private Map<String,Response> events;
 	
 	private EventRegistry(){
@@ -24,6 +22,7 @@ public class EventRegistry {
 	
 	public void notifyEvent(Response response){
 		events.put(response.getId(), response);
+		Map<String,AgentRunner> runners = AgentsRegistry.getInstance().getAgentRunners();
 		for(AgentRunner a: runners.values()){
 			a.notifyEvent(response);
 		}
@@ -33,9 +32,9 @@ public class EventRegistry {
 		return events.containsKey(event);
 	}
 	
-	public void resetRegistry(Map<String,AgentRunner> map){
+	public void resetRegistry(){
 		events = new HashMap<String, Response>();
-		runners = map;
+		
 	}
 	
 }
