@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.want.amqp.ConnectionManager;
@@ -15,7 +14,7 @@ public class AgentsCheckerThread extends Thread {
 
 	private boolean isActive;
 
-	private Channel channel;
+	//private Channel channel;
 
 	private DefaultConsumer consumer;
 
@@ -27,8 +26,8 @@ public class AgentsCheckerThread extends Thread {
 		try {
 
 			isActive = true;
-			channel = ConnectionManager.getInstance().getAgentsChannel();
-			consumer = new DefaultConsumer(channel) {
+			//channel = ConnectionManager.getInstance().getAgentsChannel();
+			consumer = new DefaultConsumer(ConnectionManager.getInstance().getAgentsChannel()) {
 				@Override
 				public void handleDelivery(String consumerTag,
 						Envelope envelope, AMQP.BasicProperties properties,
@@ -48,10 +47,10 @@ public class AgentsCheckerThread extends Thread {
 	public void run() {
 		while (isActive) {
 			try {
-				channel.basicConsume("agents", true, consumer);
+				ConnectionManager.getInstance().getAgentsChannel().basicConsume("agents", true, consumer);
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				checkConnection();
+				//checkConnection();
 			}
 
 			List<PingAgent> pings = new LinkedList<PingAgent>();

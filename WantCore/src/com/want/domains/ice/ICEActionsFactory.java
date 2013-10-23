@@ -6,8 +6,11 @@ import com.want.domains.ice.actions.IDomainAction;
 import com.want.domains.ice.actions.IdentifyArtifact;
 import com.want.domains.ice.actions.IdentifyFragment;
 import com.want.domains.ice.actions.InsertAsset;
+import com.want.domains.ice.actions.LaunchMenuOption;
+import com.want.domains.ice.actions.Login;
 import com.want.domains.ice.actions.OpenTask;
 import com.want.domains.ice.actions.SelectOption;
+import com.want.domains.ice.actions.ShowDeveloperMenu;
 import com.want.domains.ice.actions.SubmitTask;
 
 public class ICEActionsFactory {
@@ -20,6 +23,9 @@ public class ICEActionsFactory {
 	private OpenTask openTask;
 	private SelectOption selectOption;
 	private SubmitTask submitTask;
+	private ShowDeveloperMenu showDeveloperMenu;
+	private Login login;
+	private LaunchMenuOption launchMenuOption;
 	
 	public ICEActionsFactory(){
 		cancelTask = new CancelTask();
@@ -30,7 +36,9 @@ public class ICEActionsFactory {
 		openTask = new OpenTask();
 		selectOption = new SelectOption();
 		submitTask = new SubmitTask();
-		
+		showDeveloperMenu = new ShowDeveloperMenu();
+		login  = new Login();
+		launchMenuOption = new LaunchMenuOption();
 	}
 	
 	public IDomainAction getAction(String action){
@@ -53,6 +61,12 @@ public class ICEActionsFactory {
 			return submitTask;
 		}else if(a.equalsIgnoreCase("Select Option")){
 			return selectOption;
+		}else if(a.equalsIgnoreCase("Login")){
+			return login;
+		}else if(a.equalsIgnoreCase("Show Developer Menu")){
+			return showDeveloperMenu;
+		}else if(a.equalsIgnoreCase("Launch Menu Option")){
+			return launchMenuOption;
 		}
 		
 		return null;

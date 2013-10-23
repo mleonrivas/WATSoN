@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.want.amqp.ConnectionManager;
@@ -14,7 +13,7 @@ public class ResponseDispatcherThread extends Thread {
 
 	private boolean isActive;
 
-	private Channel channelResponses;
+	//private Channel channelResponses;
 
 	private DefaultConsumer consumer;
 
@@ -26,9 +25,8 @@ public class ResponseDispatcherThread extends Thread {
 		try {
 
 			isActive = true;
-			channelResponses = ConnectionManager.getInstance()
-					.getResponsesChannel();
-			consumer = new DefaultConsumer(channelResponses) {
+		
+			consumer = new DefaultConsumer(ConnectionManager.getInstance().getResponsesChannel()) {
 				public void handleDelivery(String consumerTag,
 						Envelope envelope, AMQP.BasicProperties properties,
 						byte[] body) throws IOException {
@@ -56,10 +54,10 @@ public class ResponseDispatcherThread extends Thread {
 	public void run() {
 		while (isActive) {
 			try {
-				channelResponses.basicConsume("outputQueue", true, consumer);
+				ConnectionManager.getInstance().getResponsesChannel().basicConsume("outputQueue", true, consumer);
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				checkConnection();
+				//checkConnection();
 			}
 			try {
 				Thread.sleep(200);
@@ -76,7 +74,7 @@ public class ResponseDispatcherThread extends Thread {
 	
 	private void checkConnection(){
 		if(!ConnectionManager.getInstance().isRetying()){
-			System.out.println(" %%%%% AGENTS CHECKER START RETRY CONFIG %%%%% ");
+			System.out.println(" %%%%% RESPONSE DISPATCHER START RETRY CONFIG %%%%% ");
 			ConnectionManager.getInstance().retryConfig();	
 		}
 		while(ConnectionManager.getInstance().isRetying()){

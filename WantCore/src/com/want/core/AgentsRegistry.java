@@ -50,4 +50,8 @@ private static AgentsRegistry instance = null;
 	public Map<String,AgentRunner> getAgentRunners(){
 		return runners;
 	}
+	
+	public boolean existAgent(String agentId){
+		return agents.containsKey(agentId);
+	}
 }

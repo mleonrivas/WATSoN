@@ -72,7 +72,7 @@ public class Action {
 		result += "action:\"" + action + "\", ";
 		result += "localizator:\"" + localizator + "\", ";
 		result += "localParam: '" + localParam + "', ";
-		result += "configuration:\"" + configuration + "\", ";
+		result += "configuration:" + configuration + ", ";
 		result += "data:\"" + data + "\"";
 		result += "}]}";
 		return result;

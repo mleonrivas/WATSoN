@@ -73,27 +73,37 @@ public class ConnectionManager {
 	/**
 	 * @return the connection
 	 */
-	public final Connection getConnection() {
+	public final synchronized Connection getConnection() {
 		return connection;
 	}
 
-	public Channel getAgentsChannel() {
+	public synchronized Channel getAgentsChannel() {
 		if(isRetying){
 			throw new RuntimeException("Trying to restablish the connection with AMQP Server");
+		}
+		if(!connection.isOpen()){
+			retryConfig();
 		}
 		return agentsChannel;
 	}
 
-	public Channel getMessagesChannel() {
+	public synchronized Channel getMessagesChannel() {
 		if(isRetying){
 			throw new RuntimeException("Trying to restablish the connection with AMQP Server");
 		}
+		if(!connection.isOpen()){
+			retryConfig();
+		}
 		return messagesChannel;
+		
 	}
 
-	public Channel getResponsesChannel() {
+	public synchronized Channel getResponsesChannel() {
 		if(isRetying){
 			throw new RuntimeException("Trying to restablish the connection with AMQP Server");
+		}
+		if(!connection.isOpen()){
+			retryConfig();
 		}
 		return responsesChannel;
 	}

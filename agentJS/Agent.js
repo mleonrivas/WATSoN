@@ -57,13 +57,14 @@ function processAction(action, callbackFunction){
 			createResponse(action, res);
 			callbackFunction.apply();
 			break;
-		case "keypress":
-			sendLog(writeDebugLog("Agent " + id + " Received a \"keypress\" event:"+ action.id));
-			var elementAux1 = document.evaluate(action.localParam,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
-			var elementAux2 = elementAux1.sigleNodeValue;
-			var element = elementAux2[elementAux2.length-1];
+		case "keydown":
+			sendLog(writeDebugLog("Agent " + id + " Received a \"keydown\" event:"+ action.id));
+			var element = identifyElement(action.localizator, action.localParam, action.data);
 			if(element!=null){
-				element.keypress();
+				var e = new KeyboardEvent("keydown", {bubbles: true, cancelable:false, keyIdentifier: action.configuration.key, shiftKey: action.configuration.shiftPressed, ctrlKey: action.configuration.ctrlPressed, altKey: action.configuration.altPressed});
+				delete e.keyCode;
+				Object.defineProperty(e, "keyCode", {"value" : action.configuration.key.charCodeAt(0)});
+				element.dispatchEvent(e);
 			}
 			createResponse(action, false);
 			callbackFunction.apply();
