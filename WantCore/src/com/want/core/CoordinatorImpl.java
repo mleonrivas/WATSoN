@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.want.amqp.ConnectionManager;
 @XmlRootElement
 public class CoordinatorImpl implements ICoordinator{
 	
@@ -20,12 +22,7 @@ public class CoordinatorImpl implements ICoordinator{
 		
 		scripts = new ArrayList<String>();
 		logs = new ArrayList<String>();
-		MessageSenderThread sender = new MessageSenderThread();
-		sender.start();
-		ResponseDispatcherThread dispatcher = new ResponseDispatcherThread();
-		dispatcher.start();
-		AgentsCheckerThread agentsChecker = new AgentsCheckerThread();
-		agentsChecker.start();
+		ConnectionManager.getInstance().isRetying();
 		
 		
 	}

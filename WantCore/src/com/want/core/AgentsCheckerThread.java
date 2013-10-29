@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.want.amqp.ConnectionManager;
@@ -13,12 +14,14 @@ import com.want.factory.AgentFactory;
 public class AgentsCheckerThread extends Thread {
 
 	private boolean isActive;
+	private Channel agentsChannel;
 
 	//private Channel channel;
 
 	private DefaultConsumer consumer;
 
-	public AgentsCheckerThread() {
+	public AgentsCheckerThread(Channel channel) {
+		agentsChannel = channel;
 		initConnection();
 	}
 
@@ -27,7 +30,7 @@ public class AgentsCheckerThread extends Thread {
 
 			isActive = true;
 			//channel = ConnectionManager.getInstance().getAgentsChannel();
-			consumer = new DefaultConsumer(ConnectionManager.getInstance().getAgentsChannel()) {
+			consumer = new DefaultConsumer(agentsChannel) {
 				@Override
 				public void handleDelivery(String consumerTag,
 						Envelope envelope, AMQP.BasicProperties properties,
@@ -45,12 +48,14 @@ public class AgentsCheckerThread extends Thread {
 	}
 
 	public void run() {
-		while (isActive) {
+		System.out.println("******************** AGENTS CHECKER THREAD run()");
+		while (isActive && !this.isInterrupted()) {
+			//System.out.println("---------------- AgentsCheckerThread run");
 			try {
-				ConnectionManager.getInstance().getAgentsChannel().basicConsume("agents", true, consumer);
+				agentsChannel.basicConsume("agents", true, consumer);
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				//checkConnection();
+				checkConnection();
 			}
 
 			List<PingAgent> pings = new LinkedList<PingAgent>();
@@ -59,15 +64,12 @@ public class AgentsCheckerThread extends Thread {
 				pings.add(ping);
 				ping.start();
 			}
-			while (pingsStillAlive(pings)) {
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
 			try {
+				while (pingsStillAlive(pings)) {
+					Thread.sleep(200);
+				}
+
+			
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -94,13 +96,6 @@ public class AgentsCheckerThread extends Thread {
 			System.out.println(" %%%%% AGENTS CHECKER START RETRY CONFIG %%%%% ");
 			ConnectionManager.getInstance().retryConfig();	
 		}
-		while(ConnectionManager.getInstance().isRetying()){
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		initConnection();
+		close();
 	}
 }

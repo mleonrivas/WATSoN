@@ -43,7 +43,7 @@ public class LaunchMenuOption implements IDomainAction{
 		a3.setId(id + ".3");
 		a3.setAction("click");
 		a3.setLocalizator("xpath");
-		a3.setLocalParam("//*[@class=\"gwt-Label\"][.=\"" + param + "\"]");
+		a3.setLocalParam("//*[@class=\"SettingsView\"]/div[contains(text(),\"" + param + "\")]");
 		a3.setConfiguration("");
 		a3.setData("0");
 		

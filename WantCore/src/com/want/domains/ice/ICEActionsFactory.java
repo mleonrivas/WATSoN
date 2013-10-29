@@ -8,6 +8,7 @@ import com.want.domains.ice.actions.IdentifyFragment;
 import com.want.domains.ice.actions.InsertAsset;
 import com.want.domains.ice.actions.LaunchMenuOption;
 import com.want.domains.ice.actions.Login;
+import com.want.domains.ice.actions.Logout;
 import com.want.domains.ice.actions.OpenTask;
 import com.want.domains.ice.actions.SelectOption;
 import com.want.domains.ice.actions.ShowDeveloperMenu;
@@ -26,6 +27,7 @@ public class ICEActionsFactory {
 	private ShowDeveloperMenu showDeveloperMenu;
 	private Login login;
 	private LaunchMenuOption launchMenuOption;
+	private Logout logout;
 	
 	public ICEActionsFactory(){
 		cancelTask = new CancelTask();
@@ -39,6 +41,7 @@ public class ICEActionsFactory {
 		showDeveloperMenu = new ShowDeveloperMenu();
 		login  = new Login();
 		launchMenuOption = new LaunchMenuOption();
+		logout = new Logout();
 	}
 	
 	public IDomainAction getAction(String action){
@@ -67,6 +70,8 @@ public class ICEActionsFactory {
 			return showDeveloperMenu;
 		}else if(a.equalsIgnoreCase("Launch Menu Option")){
 			return launchMenuOption;
+		}else if(a.equalsIgnoreCase("Logout")){
+			return logout;
 		}
 		
 		return null;
