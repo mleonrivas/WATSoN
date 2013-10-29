@@ -67,12 +67,16 @@ public class Action {
 	}
 	
 	public String getJSON(){
+		String config = configuration;
+		if(!configuration.trim().startsWith("{") && !configuration.trim().endsWith("}")){
+			config = "\"" + configuration + "\"";
+		}
 		String result = "{ actions:[{";
 		result += "id:\"" + id + "\", ";
 		result += "action:\"" + action + "\", ";
 		result += "localizator:\"" + localizator + "\", ";
 		result += "localParam: '" + localParam + "', ";
-		result += "configuration:" + configuration + ", ";
+		result += "configuration:" + config + ", ";
 		result += "data:\"" + data + "\"";
 		result += "}]}";
 		return result;

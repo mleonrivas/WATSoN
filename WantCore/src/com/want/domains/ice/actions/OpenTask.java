@@ -18,7 +18,7 @@ public class OpenTask implements IDomainAction{
 		a0.setId(id + ".1");
 		a0.setAction("exist");
 		a0.setLocalizator("xpath");
-		a0.setLocalParam("//*[@class = \"TaskAsCard " + getTP(param) + " PID_" + getPid(param) + "\"]");
+		a0.setLocalParam("//*[@class = \"TaskAsCard " + getTP(param) + " PID_" + getPid(param) + "\"]//*[@class = \"InlineAction\"][1]");
 		a0.setConfiguration("");
 		a0.setData("0");
 		

@@ -3,12 +3,20 @@ var browser;
 var browserVersion;
 var oS;
 var actionFinishedOK = true;
-var host = "193.147.175.243";
+var host = "localhost";
 function readData(data) {
-	var message = eval("(" + data + ");");
-	window.x=message;
-	var i=0;
-	processListOfActions(message.actions,i);
+	try {
+		var message = eval("(" + data + ");");
+		window.x=message;
+		var i=0;
+		try {
+			processListOfActions(message.actions,i);
+		} catch ( err2 ) {
+			console.log (err2); 
+		}
+	} catch ( err ) {
+		console.log ("Error parsing: " + data);  
+	}
 }
 
 function processListOfActions(list,i){
